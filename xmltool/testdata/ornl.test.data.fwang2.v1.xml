@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" name="TDS configuration file" xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0 http://www.unidata.ucar.edu/schemas/thredds/InvCatalog.1.0.2.xsd">
+  <service serviceType="OpenDAP" base="/thredds/dodsC/" name="gridded" desc="OpenDAP">
+    <property name="requires_authorization" value="false"/>
+    <property name="application" value="Web Browser"/>
+  </service>
+  <service serviceType="HTTPServer" base="/thredds/fileServer/" name="HTTPServer" desc="HTTPServer">
+    <property name="requires_authorization" value="true"/>
+    <property name="application" value="Web Browser"/>
+    <property name="application" value="Web Script"/>
+  </service>
+  <service serviceType="SRM" base="srm://esg2-sdnl1.ccs.ornl.gov:46790/srm/v2/server?SFN=mss://esg2-sdnl1.ccs.ornl.gov/home/fwang2/" name="HRMatORNL" desc="SRM">
+    <property name="requires_authorization" value="false"/>
+  </service>
+  <property name="catalog_version" value="2"/>
+  <dataset restrictAccess="esg-user" ID="ornl.test.data.fwang2.v1" name="ornl.test.data.fwang2">
+    <property name="dataset_id" value="ornl.test.data.fwang2"/>
+    <property name="dataset_version" value="1"/>
+    <property name="project" value="test"/>
+    <property name="history" value="Created from CCSM3 case b30.040e&#10; by strandwg@ucar.edu&#10; on Tue Jan 25 13:27:53 MST 2005&#10; &#10; For all data, added IPCC requested metadata"/>
+    <metadata inherited="true">
+      <variables vocabulary="CF-1.0">
+        <variable name="sftlf" vocabulary_name="land_area_fraction" units="%">land area fraction</variable>
+        <variable name="lon_bnds" vocabulary_name="lon_bnds" units="None"/>
+        <variable name="lon" vocabulary_name="longitude" units="degrees_east">longitude</variable>
+        <variable name="lat_bnds" vocabulary_name="lat_bnds" units="None"/>
+        <variable name="lat" vocabulary_name="latitude" units="degrees_north">latitude</variable>
+      </variables>
+    </metadata>
+    <metadata inherited="true">
+      <dataType>Grid</dataType>
+      <dataFormat>NetCDF</dataFormat>
+    </metadata>
+    <dataset name="sftlf.nc" ID="ornl.test.data.fwang2.v1.sftlf.nc" urlPath="esg_dataroot/test/arm/sftlf.nc" serviceName="HTTPServer">
+      <property name="file_id" value="ornl.test.data.fwang2.sftlf.nc"/>
+      <property name="file_version" value="1"/>
+      <property name="size" value="143540"/>
+      <property name="mod_time" value="2010-06-11 10:26:18"/>
+      <dataSize units="bytes">143540</dataSize>
+    </dataset>
+  </dataset>
+</catalog>
