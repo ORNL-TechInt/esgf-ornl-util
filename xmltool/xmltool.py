@@ -93,16 +93,15 @@ def xml_attrlist(argv):
             for el in X.iter():
                 if o.attrib in el.attrib.keys():
                     path = geneaology(el, elements, X, pfx)
-                    print("%s -> %s: %s" % (path, o.attrib, el.attrib[o.attrib]))
+                    print("%s ( %s: %s )" % (path, o.attrib, el.attrib[o.attrib]))
     except Exception, e:
         tb.print_exc(e)
 
 # ---------------------------------------------------------------------------
 def geneaology(el, elements, root, pfx):
-    rval = ''
+    rval = el.tag.replace(pfx, '')
     p = find_parent(el, elements)
-    # while p not in root._children:
-    while p != None and p not in root._root._children:
+    while p != None:
         tag = p.tag.replace(pfx, '')
         rval = '%s > ' % (tag) + rval
         p = find_parent(p, elements)
@@ -113,6 +112,7 @@ def find_parent(el, elements):
     for elm in elements:
         if el in elm._children:
             return elm
+    return None
 
 # ---------------------------------------------------------------------------
 toolframe.tf_launch("xml")
