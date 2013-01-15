@@ -44,7 +44,10 @@ def xml_attredit(argv):
         ehash[q[1]] = q[2]
 
     for filename in a:
+        # X = parse_map1(filename)
         X = ET.parse(filename)
+        set_global_namespace(X)
+                              
         for el in X.iter():
             if o.attrib in el.attrib.keys():
                 # -- do the edit
@@ -54,11 +57,11 @@ def xml_attredit(argv):
 
                 el.attrib[o.attrib] = ebuf
 
+        p = ET.ProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"')
+        sys.stdout.write(ET.tostring(p) + "\n")
         X.write(sys.stdout)
         print("")
-    # pass
     
-
 # ---------------------------------------------------------------------------
 def xml_attrlist(argv):
     """attrlist - list the occurences of a specified attribute
@@ -98,6 +101,35 @@ def xml_attrlist(argv):
         tb.print_exc(e)
 
 # ---------------------------------------------------------------------------
+def xml_tparse(argv):
+    """tparse - test parsing
+
+    usage: xmltool tparse [-d] <filename> <filename> ...
+
+    -d     run under python debugger
+
+    This routine is for trying out various parsing strategies.
+    """
+    p = OptionParser()
+    p.add_option('-d', '--debug',
+                 action='store_true', default=False, dest='debug',
+                 help='run the debugger')
+    (o, a) = p.parse_args(argv)
+
+    if o.debug: pdb.set_trace()
+
+    for filename in a:
+        tree = parse_map1(filename)
+        tree.write(sys.stdout)
+        
+# ---------------------------------------------------------------------------
+def find_parent(el, elements):
+    for elm in elements:
+        if el in elm._children:
+            return elm
+    return None
+
+# ---------------------------------------------------------------------------
 def geneaology(el, elements, root, pfx):
     rval = el.tag.replace(pfx, '')
     p = find_parent(el, elements)
@@ -108,11 +140,48 @@ def geneaology(el, elements, root, pfx):
     return rval
 
 # ---------------------------------------------------------------------------
-def find_parent(el, elements):
-    for elm in elements:
-        if el in elm._children:
-            return elm
-    return None
+def parse_map1(file):
+    events = "start", "start-ns", "end-ns"
 
+    root = None
+    ns_map = {}
+
+    for event, elem in ET.iterparse(file, events):
+        if event == "start-ns":
+            ns_map[elem[0]] = elem[1]
+        elif event == "start":
+            if root is None:
+                root = elem
+    rval = ET.ElementTree(root)
+    rval.ns_map = ns_map
+            
+    return rval
+
+# ---------------------------------------------------------------------------
+def parse_map2(file):
+    events = "start", "start-ns", "end-ns"
+
+    root = None
+    ns_map = []
+
+    for event, elem in ET.iterparse(file, events):
+        if event == "start-ns":
+            ns_map.append(elem)
+        elif event == 'end-ns':
+            ns_map.pop()
+        elif event == "start":
+            if root is None:
+                root = elem
+            elem.ns_map = dict(ns_map)
+            
+    rval = ET.ElementTree(root)
+    return rval
+
+# ---------------------------------------------------------------------------
+def set_global_namespace(tree):
+    tagl = [e.tag for e in tree.iter()]
+    pfx = os.path.commonprefix(tagl)
+    ET.register_namespace('', pfx.strip('{}'))
+    
 # ---------------------------------------------------------------------------
 toolframe.tf_launch("xml")

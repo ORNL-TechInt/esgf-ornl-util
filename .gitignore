@@ -1,3 +1,4 @@
+DODO.do
 *.py[cod]
 
 # C extensions
@@ -34,5 +35,6 @@ nosetests.xml
 .project
 .pydevproject
 
-# emacs backup files
+# emacs work files
+.#*
 *~
