@@ -175,6 +175,34 @@ def xml_iterate(argv):
                 print '   TEXT: %s' % (el.text)
             
 # ---------------------------------------------------------------------------
+def xml_tree(argv):
+    """tree - traverse the xml structure as a tree
+
+    usage: xmltool tree [-d] <filename> <filename> ...
+
+    -d     run under python debugger
+
+    This routine is for tree-traversing the contents of an xml file
+    """
+    p = OptionParser()
+    p.add_option('-d', '--debug',
+                 action='store_true', default=False, dest='debug',
+                 help='run the debugger')
+    (o, a) = p.parse_args(argv)
+
+    if o.debug: pdb.set_trace()
+
+    for filename in a:
+        tree = ET.parse(filename)
+        traverse_r(tree._root, "")
+            
+# ---------------------------------------------------------------------------
+def traverse_r(element, indent):
+    print("%s%s" % (indent, element.tag))
+    for child in element:
+        traverse_r(child, indent + ">")
+
+# ---------------------------------------------------------------------------
 def xml_tparse(argv):
     """tparse - test parsing
 
