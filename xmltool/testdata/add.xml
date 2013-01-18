@@ -1,0 +1,4 @@
+<service serviceType="xyzzy" base="twiddle" name="Fred" desc="a big one">
+  <property name="fullname" value="Jordan Billingsly"/>
+  <property name="fullname" value="Jordan Billingsly"/>
+</service>
