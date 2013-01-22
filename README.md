@@ -16,3 +16,17 @@ Getting started
    xmltool.py -L # creates symlink xmltool -> xmltool.py
 
 
+gridftp
+-------
+
+esg-gridftp-restart: Restart gridftp server on port 2811 with a
+customized data port range (optional) and debug logging level (also
+optional). The deployment directory for this script is /usr/local/bin.
+
+
+myproxy
+-------
+
+esg-myproxy-restart: Restart the myproxy server. Deployment directory:
+/usr/local/bin.
+
