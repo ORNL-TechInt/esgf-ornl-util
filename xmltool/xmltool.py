@@ -34,23 +34,39 @@ def xml_add(argv):
     add = ET.parse(o.infile)
 
     for filename in a:
-        # X = parse_map1(filename)
         X = ET.parse(filename)
-        set_global_namespace(X)
-                              
-        for el in X.iter():
-            if o.attrib in el.attrib.keys():
-                # -- do the edit
-                ebuf = el.attrib[o.attrib]
-                for eval in ehash.keys():
-                    ebuf = ebuf.replace(eval, ehash[eval])
-
-                el.attrib[o.attrib] = ebuf
+        merge_r(X._root, add._root)
 
         p = ET.ProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"')
         sys.stdout.write(ET.tostring(p) + "\n")
         X.write(sys.stdout)
         print("")
+    
+# ---------------------------------------------------------------------------
+def merge_r(old, new):
+    """
+    Merge new material from element new into element old. New
+    sub-elements are appended to the parent element.
+    """
+    if element_equal(old, new):
+        for newe in new:
+            merge = False
+            for olde in old:
+                if element_equal(olde, newe):
+                    merge = True
+
+            if merge:
+                merge_r(olde, newe)
+            else:
+                ET.SubElement(old, newe.tag, newe.attrib)
+                
+# ---------------------------------------------------------------------------
+def element_equal(a, b):
+    """
+    Return true if the elements are equal (i.e., the tags match and
+    the attrib dictionaries match)
+    """
+    return(a.tag == b.tag and a.attrib == b.attrib)
     
 # ---------------------------------------------------------------------------
 def xml_attredit(argv):
