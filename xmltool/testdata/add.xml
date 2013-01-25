@@ -1,4 +1,10 @@
-<service serviceType="xyzzy" base="twiddle" name="Fred" desc="a big one">
-  <property name="fullname" value="Jordan Billingsly"/>
-  <property name="fullname" value="Jordan Billingsly"/>
-</service>
+<catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0"
+         name="TDS configuration file"
+         xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0 http://www.unidata.ucar.edu/schemas/thredds/InvCatalog.1.0.2.xsd">
+
+  <service serviceType="xyzzy" base="twiddle" name="Fred" desc="a big one">
+    <property name="fullname" value="Jordan Billingsly"/>
+  </service>
+</catalog>

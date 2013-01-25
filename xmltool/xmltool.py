@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import glob
 import os
 import pdb
 import re
@@ -33,25 +34,45 @@ def xml_add(argv):
 
     add = ET.parse(o.infile)
 
-    for filename in a:
-        # X = parse_map1(filename)
-        X = ET.parse(filename)
-        set_global_namespace(X)
-                              
-        for el in X.iter():
-            if o.attrib in el.attrib.keys():
-                # -- do the edit
-                ebuf = el.attrib[o.attrib]
-                for eval in ehash.keys():
-                    ebuf = ebuf.replace(eval, ehash[eval])
-
-                el.attrib[o.attrib] = ebuf
+    flist = glob_expand(a)
+            
+    for filename in flist:
+        stem = ET.parse(filename)
+    
+        merge_r(stem._root, add._root)
 
         p = ET.ProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"')
         sys.stdout.write(ET.tostring(p) + "\n")
-        X.write(sys.stdout)
-        print("")
+        stem.write(sys.stdout)
+        sys.stdout.write("\n")
     
+# ---------------------------------------------------------------------------
+def elements_equal(e1, e2):
+    s1 = set(e1.attrib.keys())
+    s2 = set(e2.attrib.keys())
+    if s1 == s2:
+        for k in e1.attrib.keys():
+            v1 = e1.attrib[k]
+            if e1.attrib[k] != e2.attrib[k]:
+                return False
+        return True
+    else:
+        return False
+            
+# ---------------------------------------------------------------------------
+def merge_r(sum, new):
+    if sum.tag == new.tag and sum.attrib == new.attrib:
+        merge = False
+        for nchild in new:
+            for schild in sum:
+                if schild.tag == nchild.tag and schild.attrib == nchild.attrib:
+                    merge = True
+                    
+            if merge:
+                merge_r(schild, nchild)
+            else:
+                ET.SubElement(sum, nchild.tag, nchild.attrib)
+
 # ---------------------------------------------------------------------------
 def xml_attredit(argv):
     """attredit - edit attribute values in XML files
@@ -279,6 +300,15 @@ def parse_map2(file):
     rval = ET.ElementTree(root)
     return rval
 
+# ---------------------------------------------------------------------------
+def glob_expand(fspec_list):
+    flist = []
+    for fspec in fspec_list:
+        flist.extend(glob.glob(fspec))
+    rval = list(set(flist))
+    rval.sort()
+    return(rval)
+    
 # ---------------------------------------------------------------------------
 def set_global_namespace(tree):
     tagl = [e.tag for e in tree.iter()]
