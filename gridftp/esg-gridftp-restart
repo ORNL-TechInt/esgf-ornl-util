@@ -1,0 +1,27 @@
+#!/bin/bash -x
+
+PID=`ps -ef | grep -v grep | grep -- "globus-gridftp-server -p 2811" | awk '{ print $2; }'`
+kill -9 $PID
+
+. /etc/esg.env
+export X509_CERT_DIR=/etc/grid-security/certificates
+export GLOBUS_TCP_PORT_RANGE=40003,40500
+export GLOBUS_TCP_SOURCE_RANGE=40003,40500
+export GSI_AUTHZ_CONF=/etc/grid-security/gsi-authz.conf
+export GLOBUS_USAGE_DEBUG=MESSAGES,/esg/log/esg-server-usage-gridftp.log
+
+# export GLOBUS_GSI_AUTHZ_DEBUG_LEVEL=2
+# export GLOBUS_GSI_AUTHZ_DEBUG_FILE=/tmp/GFTPAUTHLOG
+export JAVA_HOME=/usr/local/java
+
+CMD="/usr/local/globus/sbin/globus-gridftp-server -p 2811 \
+    -chroot-path /esg/gridftp_root \
+    -usage-stats-id 2811 \
+    -usage-stats-target localhost:0\!all \
+    -acl customgsiauthzinterface \
+    -no-cas"
+
+# uncomment the line below for extra logging in /var/log/gridftp-esg
+# CMD="$CMD -d ALL -l /var/log/gridftp-esg"
+
+$CMD &

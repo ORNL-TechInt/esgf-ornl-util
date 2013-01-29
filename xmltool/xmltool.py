@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import glob
 import os
 import pdb
 import re
@@ -33,6 +34,7 @@ def xml_add(argv):
 
     add = ET.parse(o.infile)
         
+    flist = glob_expand(a)
     for filename in a:
         X = ET.parse(filename)
         set_global_namespace(X)
@@ -40,8 +42,8 @@ def xml_add(argv):
 
         p = ET.ProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"')
         sys.stdout.write(ET.tostring(p) + "\n")
-        X.write(sys.stdout)
-        print("")
+        stem.write(sys.stdout)
+        sys.stdout.write("\n")
     
 # ---------------------------------------------------------------------------
 def ordered_merge_r(old, new):
@@ -85,7 +87,7 @@ def merge_r(old, new):
                 ET.SubElement(old, newe.tag, newe.attrib)
                 
 # ---------------------------------------------------------------------------
-def element_equal(a, b):
+def elements_equal(a, b):
     """
     Return true if the elements are equal (i.e., the tags match and
     the attrib dictionaries match)
@@ -319,6 +321,15 @@ def parse_map2(file):
     rval = ET.ElementTree(root)
     return rval
 
+# ---------------------------------------------------------------------------
+def glob_expand(fspec_list):
+    flist = []
+    for fspec in fspec_list:
+        flist.extend(glob.glob(fspec))
+    rval = list(set(flist))
+    rval.sort()
+    return(rval)
+    
 # ---------------------------------------------------------------------------
 def set_global_namespace(tree):
     tagl = [e.tag for e in tree.iter()]

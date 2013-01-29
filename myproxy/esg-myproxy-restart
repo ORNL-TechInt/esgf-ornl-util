@@ -1,0 +1,12 @@
+#!/bin/bash -x
+
+PID=`ps -ef | grep -v grep | grep -- "myproxy-server" | awk '{ print $2; }'`
+kill -9 $PID
+
+. /etc/esg.env
+
+export JAVA_HOME=/usr/local/java
+
+CMD="/usr/local/globus/sbin/myproxy-server -P /usr/local/globus/var/myproxy.pid"
+
+$CMD
