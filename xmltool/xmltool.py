@@ -32,16 +32,40 @@ def xml_add(argv):
     if o.debug: pdb.set_trace()
 
     add = ET.parse(o.infile)
-
+        
     for filename in a:
         X = ET.parse(filename)
-        merge_r(X._root, add._root)
+        set_global_namespace(X)
+        ordered_merge_r(X._root, add._root)
 
         p = ET.ProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"')
         sys.stdout.write(ET.tostring(p) + "\n")
         X.write(sys.stdout)
         print("")
     
+# ---------------------------------------------------------------------------
+def ordered_merge_r(old, new):
+    """
+    Merge new material from element new into element old, maintaining
+    the order of element old.
+    """
+    if element_equal(old, new):
+        for newe in new:
+            merge = False
+            before = 0
+            for olde in old:
+                if element_equal(olde, newe):
+                    merge = True
+                elif newe.tag <= olde.tag:
+                    before += 1
+                    
+            if merge:
+                ordered_merge_r(olde, newe)
+            else:
+                if before in range(len(old._children)):
+                    newe.tail = old._children[before].tail
+                old.insert(before, newe)
+                
 # ---------------------------------------------------------------------------
 def merge_r(old, new):
     """
