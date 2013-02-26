@@ -24,10 +24,10 @@ CMD="/usr/local/globus/sbin/globus-gridftp-server \
 # uncomment the line below for extra logging in /var/log/gridftp-esg
 CMD="$CMD -d ALL -l /var/log/gridftp-esg"
 
-at now << DONE1
+at now << DONE1 > /dev/null 2>&1
 $CMD -p 2811
 DONE1
 
-at now << DONE2
+at now << DONE2 > /dev/null 2>&1
 $CMD -p 2812
 DONE2
