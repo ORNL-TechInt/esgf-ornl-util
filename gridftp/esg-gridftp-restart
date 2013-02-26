@@ -18,16 +18,15 @@ export GLOBUS_USAGE_DEBUG=MESSAGES,/esg/log/esg-server-usage-gridftp.log
 # export GLOBUS_GSI_AUTHZ_DEBUG_FILE=/tmp/GFTPAUTHLOG
 export JAVA_HOME=/usr/local/java
 
+export LOGFILE=/var/log/gridftp-esg
+
 CMD="/usr/local/globus/sbin/globus-gridftp-server \
-    -no-cas"
+    -no-cas -d ALL -l $LOGFILE"
 
-# uncomment the line below for extra logging in /var/log/gridftp-esg
-CMD="$CMD -d ALL -l /var/log/gridftp-esg"
-
-at now << DONE1 > /dev/null 2>&1
-$CMD -p 2811
+at now << DONE1
+$CMD -p 2811 >> $LOGFILE 2>&1
 DONE1
 
-at now << DONE2 > /dev/null 2>&1
-$CMD -p 2812
+at now << DONE2
+$CMD -p 2812 >> $LOGFILE 2>&1
 DONE2
