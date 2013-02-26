@@ -18,31 +18,16 @@ export GLOBUS_USAGE_DEBUG=MESSAGES,/esg/log/esg-server-usage-gridftp.log
 # export GLOBUS_GSI_AUTHZ_DEBUG_FILE=/tmp/GFTPAUTHLOG
 export JAVA_HOME=/usr/local/java
 
-mount | grep -q grid-security
-if [[ "$?" == "1" ]]; then
-    mount --bind /etc/grid-security/certificates \
-        /lustre/esgfs/etc/grid-security/certificates
-fi
-
-# old chroot-path:  /esg/gridftp_root
-# CHROOT_PATH=/esg/gridftp_root
-CHROOT_PATH=/lustre/esgfs
-#CMD="/usr/local/globus/sbin/globus-gridftp-server \
-#    -chroot-path $CHROOT_PATH \
-#    -usage-stats-target localhost:0\!all \
-#    -acl customgsiauthzinterface \
-#    -no-cas"
 CMD="/usr/local/globus/sbin/globus-gridftp-server \
-    -chroot-path $CHROOT_PATH \
     -no-cas"
 
 # uncomment the line below for extra logging in /var/log/gridftp-esg
 CMD="$CMD -d ALL -l /var/log/gridftp-esg"
 
 at now << DONE1
-$CMD -usage-stats-id 2811 -p 2811
+$CMD -p 2811
 DONE1
 
 at now << DONE2
-$CMD -usage-stats-id 2812 -p 2812
+$CMD -p 2812
 DONE2
