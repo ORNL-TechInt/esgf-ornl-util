@@ -19,9 +19,12 @@ export GLOBUS_USAGE_DEBUG=MESSAGES,/esg/log/esg-server-usage-gridftp.log
 export JAVA_HOME=/usr/local/java
 
 export LOGFILE=/var/log/gridftp-esg
+echo "* * * Restarting servers at `date \"+%Y.%m%d %H:%M:%S\"`" >> $LOGFILE
 
+# CHROOT="-chroot-path /lustre/esgfs"
+# CHROOT="-chroot-path /esg/gridftp_root"
 CMD="/usr/local/globus/sbin/globus-gridftp-server \
-    -no-cas -d ALL -l $LOGFILE"
+    -no-cas $CHROOT -d ALL -l $LOGFILE"
 
 at now << DONE1
 $CMD -p 2811 >> $LOGFILE 2>&1
