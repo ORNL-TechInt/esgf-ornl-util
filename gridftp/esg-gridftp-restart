@@ -1,5 +1,10 @@
 #!/bin/bash
-
+# ---------------------------------------------------------------------------
+# The history of this script is in git repo 
+#
+#     git@github.com:ORNL-TechInt/esgf-ornl-util.git
+#
+# ---------------------------------------------------------------------------
 PIDS=`ps -ef | grep -v grep | grep -- "globus-gridftp-server" \
      | awk '{ printf "%s ", $2; }'`
 echo $PIDS
