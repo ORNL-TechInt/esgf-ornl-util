@@ -28,13 +28,12 @@ echo "* * * Restarting servers at `date \"+%Y.%m%d %H:%M:%S\"`" >> $LOGFILE
 
 # CHROOT="-chroot-path /lustre/esgfs"
 # CHROOT="-chroot-path /esg/gridftp_root"
+
+echo "CHROOT: '$CHROOT'"
+
 CMD="/usr/local/globus/sbin/globus-gridftp-server \
     -no-cas $CHROOT -d ALL -l $LOGFILE"
 
-at now << DONE1
-$CMD -p 2811 >> $LOGFILE 2>&1
-DONE1
+nohup $CMD -p 2811 >> $LOGFILE 2>&1 &
 
-at now << DONE2
-$CMD -p 2812 >> $LOGFILE 2>&1
-DONE2
+nohup $CMD -p 2812 >> $LOGFILE 2>&1 &
