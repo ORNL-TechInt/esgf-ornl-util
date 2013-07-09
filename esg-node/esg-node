@@ -2255,6 +2255,13 @@ _glean_keystore_info() {
     return 0
 }
 
+set_tomcat_classpath() {
+    bestman_install_dir="/usr/local/bestman/bestman2/"
+    piece1=$(find $(readlink -f ${tomcat_install_dir}/bin/) | grep jar | xargs | perl -pe 's/ /:/g')
+    piece2=$(find $(readlink -f ${bestman_install_dir}/lib) | grep jar | xargs | perl -pe 's/ /:/g')
+    echo ${piece1}:${piece2}
+}
+
 start_tomcat() {
     check_tomcat_process
     local ret=$?
@@ -2269,8 +2276,9 @@ start_tomcat() {
     chmod 755 ${tomcat_install_dir}/work/Catalina
 
     pushd $tomcat_install_dir >& /dev/null
+    classpath=$(set_tomcat_classpath)
     [ $((sel & ALL_BIT)) != 0 ] && java_opts=" -Xmx2048m -Xms1024m -XX:MaxPermSize=512m $java_opts"
-    jsvc_launch_command="JAVA_HOME=$java_install_dir ${tomcat_install_dir}/bin/jsvc -Djava.awt.headless=true -Dcom.sun.enterprise.server.ss.ASQuickStartup=false -Dcatalina.home=${tomcat_install_dir} -pidfile $tomcat_pid_file -cp $(find $(readlink -f `pwd`/bin/) | grep jar | xargs | perl -pe 's/ /:/g') -outfile ${tomcat_install_dir}/logs/catalina.out -errfile ${tomcat_install_dir}/logs/catalina.err -user $tomcat_user $tomcat_opts $java_opts -Dsun.security.ssl.allowUnsafeRenegotiation=false org.apache.catalina.startup.Bootstrap"
+    jsvc_launch_command="JAVA_HOME=$java_install_dir ${tomcat_install_dir}/bin/jsvc -Djava.awt.headless=true -Dcom.sun.enterprise.server.ss.ASQuickStartup=false -Dcatalina.home=${tomcat_install_dir} -pidfile $tomcat_pid_file -cp ${classpath} -outfile ${tomcat_install_dir}/logs/catalina.out -errfile ${tomcat_install_dir}/logs/catalina.err -user $tomcat_user $tomcat_opts $java_opts -Dsun.security.ssl.allowUnsafeRenegotiation=false org.apache.catalina.startup.Bootstrap"
     echo "$jsvc_launch_command"
     JAVA_HOME=${java_install_dir} ./bin/jsvc \
         -Djava.awt.headless=true \
